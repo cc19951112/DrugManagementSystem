@@ -1,6 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QMenu, QStatusBar, QToolBar
-
+from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QStatusBar, QToolBar
+from supplier_settings_dialog import SupplierSettingsDialog  # 导入供应商设置对话框类
 
 class DrugManagementSystem(QMainWindow):
     def __init__(self):
@@ -53,29 +53,16 @@ class DrugManagementSystem(QMainWindow):
         # 帮助菜单
         help_menu = menu_bar.addMenu("帮助(&H)")
 
-
-        # 创建领药入库子菜单
-        receive_menu = QMenu("领药入库", self)
-        business_management_menu.addMenu(receive_menu)
-
         # 创建子菜单项
-        new_entry_action = QAction("新建单据", self)
-        edit_entry_action = QAction("编辑单据", self)
-        approve_entry_action = QAction("审核单据", self)
-        submit_entry_action = QAction("提交单据", self)
-        receive_menu.addAction(new_entry_action)
-        receive_menu.addAction(edit_entry_action)
-        receive_menu.addAction(approve_entry_action)
-        receive_menu.addAction(submit_entry_action)
+        # 供应商设置
+        supplier_settings_action = QAction("供应商设置", self)
+        supplier_settings_action.triggered.connect(self.open_supplier_settings)
+        basic_info_settings_menu.addAction(supplier_settings_action)
 
-        # 添加其他业务处理功能
-        business_management_menu.addAction("内部领药调拨")
-        business_management_menu.addAction("本科室领药")
-        business_management_menu.addAction("外部领药")
-        business_management_menu.addAction("退药")
-        business_management_menu.addAction("领药单据管理")
-
-
+    def open_supplier_settings(self):
+        # 打开供应商设置对话框
+        dialog = SupplierSettingsDialog(self)
+        dialog.exec_()
 
     def create_toolbar(self):
         # 创建工具栏
