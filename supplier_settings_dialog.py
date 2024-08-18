@@ -75,41 +75,43 @@ class SupplierSettingsDialog(QDialog):
 
         # 按照图中的布局设置控件的位置
         details_layout.addWidget(self.name_label, 0, 0)
-        details_layout.addWidget(self.name_edit, 0, 1, 1, 3)
-        details_layout.addWidget(self.address_label, 0, 4)
-        details_layout.addWidget(self.address_edit, 0, 5)
+        details_layout.addWidget(self.name_edit, 0, 1, 1, 5)
 
-        details_layout.addWidget(self.wb_code_label, 1, 0)
-        details_layout.addWidget(self.wb_code_edit, 1, 1, 1, 3)
-        details_layout.addWidget(self.py_code_label, 1, 4)
-        details_layout.addWidget(self.py_code_edit, 1, 5)
+        details_layout.addWidget(self.address_label, 1, 0)
+        details_layout.addWidget(self.address_edit, 1, 1, 1, 5)
 
-        details_layout.addWidget(self.email_label, 2, 0)
-        details_layout.addWidget(self.email_edit, 2, 1, 1, 3)
-        details_layout.addWidget(self.fax_label, 2, 4)
-        details_layout.addWidget(self.fax_edit, 2, 5)
+        details_layout.addWidget(self.wb_code_label, 2, 0)
+        details_layout.addWidget(self.wb_code_edit, 2, 1, 1, 3)
+        details_layout.addWidget(self.py_code_label, 2, 4)
+        details_layout.addWidget(self.py_code_edit, 2, 5)
 
-        details_layout.addWidget(self.phone_label, 3, 0)
-        details_layout.addWidget(self.phone_edit, 3, 1, 1, 5)
+        details_layout.addWidget(self.email_label, 3, 0)
+        details_layout.addWidget(self.email_edit, 3, 1, 1, 3)
+        details_layout.addWidget(self.fax_label, 3, 4)
+        details_layout.addWidget(self.fax_edit, 3, 5)
 
-        details_layout.addWidget(self.contact_label, 4, 0)
-        details_layout.addWidget(self.contact_edit, 4, 1, 1, 5)
+        details_layout.addWidget(self.phone_label, 4, 0)
+        details_layout.addWidget(self.phone_edit, 4, 1, 1, 5)
 
-        details_layout.addWidget(self.bank_label, 5, 0)
-        details_layout.addWidget(self.bank_edit, 5, 1, 1, 3)
-        details_layout.addWidget(self.account_label, 5, 4)
-        details_layout.addWidget(self.account_edit, 5, 5)
+        details_layout.addWidget(self.contact_label, 5, 0)
+        details_layout.addWidget(self.contact_edit, 5, 1, 1, 5)
 
-        details_layout.addWidget(self.tax_label, 6, 0)
-        details_layout.addWidget(self.tax_edit, 6, 1, 1, 5)
+        details_layout.addWidget(self.bank_label, 6, 0)
+        details_layout.addWidget(self.bank_edit, 6, 1, 1, 5)
 
-        details_layout.addWidget(self.note_label, 7, 0)
-        details_layout.addWidget(self.note_edit, 7, 1, 1, 5)
+        details_layout.addWidget(self.account_label, 7, 0)
+        details_layout.addWidget(self.account_edit, 7, 1, 1, 5)
+
+        details_layout.addWidget(self.tax_label, 8, 0)
+        details_layout.addWidget(self.tax_edit, 8, 1, 1, 5)
+
+        details_layout.addWidget(self.note_label, 9, 0)
+        details_layout.addWidget(self.note_edit, 9, 1, 1, 5)
 
         # 加入分隔线
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
-        details_layout.addWidget(line, 8, 0, 1, 6)
+        details_layout.addWidget(line, 10, 0, 1, 6)
 
         # 将分割器加入主布局
         main_layout.addWidget(splitter)
