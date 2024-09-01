@@ -61,10 +61,10 @@ class DrugManagementSystem(QMainWindow):
         material_category_settings_action = QAction("材料分类设置", self)
         material_category_settings_action.triggered.connect(self.open_material_category_settings)
         basic_info_settings_menu.addAction(material_category_settings_action)
-        # 材料属性设置
-        material_attributes_settings_action = QAction("材料属性设置", self)
-        material_attributes_settings_action.triggered.connect(self.open_material_attributes_settings)
-        basic_info_settings_menu.addAction(material_attributes_settings_action)
+        # 材料属性设置（不要了20240901）
+        # material_attributes_settings_action = QAction("材料属性设置", self)
+        # material_attributes_settings_action.triggered.connect(self.open_material_attributes_settings)
+        # basic_info_settings_menu.addAction(material_attributes_settings_action)
         # 材料设置
         material_settings_action = QAction("材料设置", self)
         material_settings_action.triggered.connect(self.open_material_settings)

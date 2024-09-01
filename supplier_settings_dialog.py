@@ -124,8 +124,8 @@ class SupplierSettingsDialog(QDialog):
         confirm_button = QPushButton("确定")
         print_button = QPushButton("打印")
         export_button = QPushButton("转Excel")
-        help_button = QPushButton("帮助")
-        exit_button = QPushButton("退出")
+        # help_button = QPushButton("帮助")
+        # exit_button = QPushButton("退出")
 
         button_layout.addWidget(add_button)
         button_layout.addWidget(edit_button)
@@ -133,8 +133,8 @@ class SupplierSettingsDialog(QDialog):
         button_layout.addWidget(confirm_button)
         button_layout.addWidget(print_button)
         button_layout.addWidget(export_button)
-        button_layout.addWidget(help_button)
-        button_layout.addWidget(exit_button)
+        # button_layout.addWidget(help_button)
+        # button_layout.addWidget(exit_button)
 
         main_layout.addLayout(button_layout)
 
