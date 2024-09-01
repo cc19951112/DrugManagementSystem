@@ -1,3 +1,10 @@
 *.pyc
 __pycache__/
 venv/
+build/*
+dist/*
+/dist/DrugManagementSystem/
+/build/DrugManagementSystem/
+*.dll
+*.pyd
+*.qm
