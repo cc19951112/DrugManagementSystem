@@ -1,47 +1,58 @@
 import sqlite3
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTableWidget, QTableWidgetItem, QHeaderView
+from PyQt5.QtWidgets import (
+    QDialog, QVBoxLayout, QTableWidget, QTableWidgetItem, 
+    QHeaderView, QPushButton, QHBoxLayout
+)
+
 
 class InventoryQueryDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("药品库存查询")
-        self.setGeometry(200, 200, 1024, 600)
         self.init_ui()
 
     def init_ui(self):
+        self.setWindowTitle("材料库存信息")
+        self.setGeometry(300, 300, 800, 400)
+
         layout = QVBoxLayout(self)
 
-        # 创建表格
-        self.table_widget = QTableWidget(0, 20)  # 设置列数为20
-        self.table_widget.setHorizontalHeaderLabels([
-            "序号", "药品编码", "药品名称", "规格", "产地", "批次", "生产批号",
-            "单位", "库存", "药品售价", "售价金额", "药品进价", "进价金额", 
-            "毛利", "毛利率", "失效日期", "使用期限", "国家医保代码", 
-            "国家医保名称", "供应商"
+        # 创建库存信息表格
+        self.inventory_table = QTableWidget(0, 5)  # 5列分别对应编码、名称、包装价格、失效日期、库存数量
+        self.inventory_table.setHorizontalHeaderLabels([
+            "编码", "材料名称", "包装价格", "失效日期", "库存数量"
         ])
-        self.table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.table_widget.setShowGrid(True)  # 显示网格线
+        self.inventory_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        layout.addWidget(self.inventory_table)
 
-        # 将表格加入到布局中
-        layout.addWidget(self.table_widget)
+        # 添加“刷新”按钮
+        button_layout = QHBoxLayout()
+        refresh_button = QPushButton("刷新")
+        button_layout.addWidget(refresh_button)
+        layout.addLayout(button_layout)
 
-        #此处你可以通过调用数据库填充表格内容（如果需要）
-        self.load_data()
+        # 绑定按钮的信号与槽
+        refresh_button.clicked.connect(self.load_inventory_data)
 
-    #你可以定义一个方法来从数据库加载数据到表格
-    def load_data(self):
-        # 连接数据库并查询库存数据
-        conn = sqlite3.connect('inventory.db')
+        # 初始化加载库存数据
+        self.load_inventory_data()
+
+    def load_inventory_data(self):
+        """从数据库加载材料库存信息"""
+        # 清空表格中的现有内容
+        self.inventory_table.setRowCount(0)
+
+        # 连接到SQLite数据库
+        conn = sqlite3.connect('material.db')
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM inventory')
-        inventory_data = cursor.fetchall()
-    
-        # 填充表格
-        for row_data in inventory_data:
-            row_position = self.table_widget.rowCount()
-            self.table_widget.insertRow(row_position)
-            for column, data in enumerate(row_data):
-                self.table_widget.setItem(row_position, column, QTableWidgetItem(str(data)))
-    
+
+        # 查询 materials 表中的所有库存数据
+        cursor.execute('SELECT code, name, packaging_price, expiration_date, inventory_count FROM materials')
+        materials = cursor.fetchall()
         conn.close()
+
+        # 将每一条库存信息插入表格中
+        for row_number, material in enumerate(materials):
+            self.inventory_table.insertRow(row_number)
+            for column_number, data in enumerate(material):
+                self.inventory_table.setItem(row_number, column_number, QTableWidgetItem(str(data)))
 

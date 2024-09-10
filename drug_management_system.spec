@@ -1,3 +1,4 @@
+# pyinstaller drug_management_system.spec
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
@@ -7,9 +8,8 @@ a = Analysis(
     pathex=['.'],  # 搜索路径，'.'表示当前目录
     binaries=[],  # 这里可以加入额外的二进制文件
     datas=[  # 打包的数据文件
-        ('drug_storage.db', '.'),  # 将drug_storage.db打包到根目录下
         ('inventory.db', '.'),  # 将inventory.db打包到根目录下
-        ('materials.db', '.'),  # 将materials.db打包到根目录下
+        ('material.db', '.'),  # 将materials.db打包到根目录下
         ('suppliers.db', '.'),  # 将suppliers.db打包到根目录下
     ],
     hiddenimports=[],  # 隐藏导入的模块列表，如果PyInstaller无法检测到，可以在这里手动添加

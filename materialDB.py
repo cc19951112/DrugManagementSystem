@@ -1,137 +1,111 @@
 import sqlite3
-import pandas as pd
 
-def create_materials_database_from_excel(excel_file):
-    # 读取Excel文件中的材料数据
-    df = pd.read_excel(excel_file, sheet_name=0, usecols="B:R", skiprows=5)
+# 连接到SQLite数据库，如果数据库不存在将会创建一个新的数据库
+conn = sqlite3.connect('material.db')
 
-    # 使用一次分割获取“产地”，剩下的作为“名称和规格”
-    df[['名称和规格', '产地']] = df['名称 /  规格 / 产地'].str.rsplit('/', 1, expand=True)
-    
-    # 然后从“名称和规格”中再进行分割，获取“名称”和“规格”
-    df[['名称', '规格']] = df['名称和规格'].str.split('/', 1, expand=True)
+# 创建一个游标对象，用于执行SQL语句
+cursor = conn.cursor()
 
-    # 连接到SQLite数据库
-    conn = sqlite3.connect('materials.db')
-    cursor = conn.cursor()
+# 创建材料表的SQL语句
+create_table_sql = '''
+CREATE TABLE IF NOT EXISTS materials (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code TEXT NOT NULL,
+    name TEXT NOT NULL,
+    packaging_price REAL NOT NULL,
+    expiration_date DATE NOT NULL,
+    inventory_count INTEGER DEFAULT 0
+);
+'''
 
-    # 删除现有表（如果有）
-    cursor.execute('DROP TABLE IF EXISTS material_categories')
-    cursor.execute('DROP TABLE IF EXISTS material_attributes')
-    cursor.execute('DROP TABLE IF EXISTS materials')
+# 执行创建表的SQL语句
+cursor.execute(create_table_sql)
 
-    # 创建材料分类表结构
-    cursor.execute('''
-    CREATE TABLE material_categories (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        parent_id INTEGER,
-        FOREIGN KEY (parent_id) REFERENCES material_categories (id)
-    )
-    ''')
+# 插入十条材料信息的SQL语句
+insert_materials_sql = '''
+INSERT INTO materials (code, name, packaging_price, expiration_date, inventory_count)
+VALUES 
+    ('M001', '感冒药', 15.5, '2025-12-31', 0),
+    ('M002', '止痛药', 20.0, '2024-08-15', 0),
+    ('M003', '维生素C', 12.0, '2026-05-10', 0),
+    ('M004', '抗生素', 45.0, '2023-11-20', 0),
+    ('M005', '抗过敏药', 18.0, '2025-03-01', 0),
+    ('M006', '消炎药', 25.0, '2024-06-30', 0),
+    ('M007', '胃药', 30.0, '2025-10-15', 0),
+    ('M008', '降压药', 35.0, '2026-02-28', 0),
+    ('M009', '止咳药', 22.0, '2024-09-05', 0),
+    ('M010', '镇静药', 40.0, '2023-12-25', 0);
+'''
 
-    # 创建材料属性表结构
-    cursor.execute('''
-    CREATE TABLE material_attributes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        code TEXT NOT NULL,
-        name TEXT NOT NULL
-    )
-    ''')
-    
-    # 创建材料表结构
-    cursor.execute('''
-    CREATE TABLE materials (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        category TEXT,
-        code TEXT,
-        name TEXT,
-        spec TEXT,
-        origin TEXT,
-        attribute TEXT,
-        cost REAL,
-        pinyin TEXT,
-        wb_code TEXT,
-        package_unit TEXT,
-        use_unit TEXT,
-        package_conversion REAL,
-        package_price REAL,
-        use_price REAL,
-        package_sale REAL,
-        use_sale REAL,
-        manufacturer TEXT
-    )
-    ''')
+# 执行插入数据的SQL语句
+cursor.execute(insert_materials_sql)
 
-    # 插入材料数据
-    for index, row in df.iterrows():
-        cursor.execute('''
-        INSERT INTO materials (
-            category, code, name, spec, origin, attribute, cost, pinyin, wb_code, 
-            package_unit, use_unit, package_conversion, package_price, use_price, 
-            package_sale, use_sale, manufacturer
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (
-            row['分类'], row['编码'], row['名称'], row['规格'], row['产地'], 
-            row['属性'], row['费用'], row['拼音码'], row['五笔码'], 
-            row['包装单位'], row['使用单位'], row['包装换算'], 
-            row['包装批价'], row['使用批价'], row['包装售价'], 
-            row['使用售价'], row['生产厂家']
-        ))
+# 提交事务
+conn.commit()
 
-    # 定义材料分类数据
-    categories = [
-        "一般材料",
-        "一次性材料",
-        # "消毒片",
-        # "专科材料",
-        # "紫外线灯",
-        # "漂白粉",
-        # "消毒类",
-        # "消毒药水",
-        # "麻醉药品",
-        # "化证材料",
-        "办公耗材",
-        "检验科类"
-        # "妇科类",
-        # "C14科",
-        # "胶囊胃肠镜",
-        # "耳鼻喉科",
-        # "口腔科"
-    ]
+# 关闭连接
+conn.close()
 
-    # 插入材料分类数据
-    for category in categories:
-        cursor.execute('''
-        INSERT INTO material_categories (name, parent_id)
-        VALUES (?, NULL)''', (category,))
+print("材料信息已成功插入到数据库material.db中！")
 
-    # 定义材料属性数据
-    attributes = [
-        ("01", "一次性输液类"),
-        ("02", "一次性敷料类"),
-        ("03", "一次性器械类"),
-        ("04", "可重复使用器械类"),
-        ("05", "消毒灭菌类"),
-        ("06", "一次性耗材类"),
-        ("07", "化试"),
-        ("08", "针灸类"),
-        ("09", "麻醉类"),
-        ("10", "其它类"),
-        ("11", "办公用品类"),
-        ("12", "检验科类"),
-        ("13", "妇科类"),
-        ("14", "口腔科")
-    ]
+# 连接到SQLite数据库（如果数据库不存在将会创建一个新的数据库）
+conn = sqlite3.connect('material.db')
 
-    # 插入材料属性数据
-    for code, name in attributes:
-        cursor.execute('''
-        INSERT INTO material_attributes (code, name)
-        VALUES (?, ?)''', (code, name))
+# 创建一个游标对象，用于执行SQL语句
+cursor = conn.cursor()
 
-    conn.commit()
-    conn.close()
+# 创建材料入库记录表的SQL语句
+create_table_sql = '''
+CREATE TABLE IF NOT EXISTS material_storage (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    storage_number TEXT NOT NULL,
+    storage_date DATE NOT NULL,
+    handler TEXT NOT NULL,
+    material_name TEXT NOT NULL,
+    supplier TEXT NOT NULL,
+    quantity INTEGER NOT NULL,
+    purchase_price REAL NOT NULL
+);
+'''
 
-# 调用此函数以根据Excel文件重新创建数据库
-create_materials_database_from_excel('material.xls')
+# 执行创建表的SQL语句
+cursor.execute(create_table_sql)
+
+# 提交事务
+conn.commit()
+
+# 关闭连接
+conn.close()
+
+print("材料入库记录表创建成功！")
+
+import sqlite3
+
+# 连接到SQLite数据库
+conn = sqlite3.connect('material.db')
+
+# 创建一个游标对象，用于执行SQL语句
+cursor = conn.cursor()
+
+# 创建材料出库记录表的SQL语句
+create_table_sql = '''
+CREATE TABLE IF NOT EXISTS material_outbound (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    outbound_number TEXT NOT NULL,
+    outbound_date DATE NOT NULL,
+    handler TEXT NOT NULL,
+    material_name TEXT NOT NULL,
+    quantity INTEGER NOT NULL
+);
+'''
+
+# 执行创建表的SQL语句
+cursor.execute(create_table_sql)
+
+# 提交事务
+conn.commit()
+
+# 关闭连接
+conn.close()
+
+print("材料出库记录表创建成功！")

@@ -2,13 +2,12 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QStatusBar, QToolBar, QWidget, QVBoxLayout, QStackedWidget
 from supplier_settings_dialog import SupplierSettingsDialog
 from material_category_settings_dialog import MaterialCategorySettingsDialog
-from material_attributes_settings_dialog import MaterialAttributesSettingsDialog
-from material_settings_dialog import MaterialSettingsWidget  # 导入MaterialSettingsWidget
+from material_settings_dialog import MaterialSettingsWidget  
 from inventory_query_dialog import InventoryQueryDialog
-from drug_storage_dialog import DrugStorageDialog
-
-
-
+from material_storage_dialog import MaterialStorageDialog
+from material_outbound_dialog import MaterialOutboundDialog
+from material_storage_query_dialog import MaterialStorageQueryDialog
+from material_outbound_query_dialog import MaterialOutboundQueryDialog
 class DrugManagementSystem(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -38,17 +37,17 @@ class DrugManagementSystem(QMainWindow):
         # 基础信息设置菜单
         basic_info_settings_menu = menu_bar.addMenu("基础信息设置(&B)")
         # 业务信息设置菜单
-        business_info_settings_menu = menu_bar.addMenu("业务信息设置(&Y)")
+        #business_info_settings_menu = menu_bar.addMenu("业务信息设置(&Y)")
         # 门诊业务菜单
-        outpatient_business_menu = menu_bar.addMenu("门诊业务(&M)")
+        #outpatient_business_menu = menu_bar.addMenu("门诊业务(&M)")
         # 业务管理菜单
         business_management_menu = menu_bar.addMenu("业务管理(&T)")
         # 业务报表查询菜单
-        business_report_query_menu = menu_bar.addMenu("业务报表查询(&Q)")
+        #business_report_query_menu = menu_bar.addMenu("业务报表查询(&Q)")
         # 库存报表查询菜单
         inventory_report_query_menu = menu_bar.addMenu("库存报表查询(&R)")
         # 门诊报表查询菜单
-        outpatient_report_query_menu = menu_bar.addMenu("门诊报表查询(&X)")
+        #outpatient_report_query_menu = menu_bar.addMenu("门诊报表查询(&X)")
         # 帮助菜单
         help_menu = menu_bar.addMenu("帮助(&H)")
 
@@ -58,43 +57,55 @@ class DrugManagementSystem(QMainWindow):
         supplier_settings_action.triggered.connect(self.open_supplier_settings)
         basic_info_settings_menu.addAction(supplier_settings_action)
         # 材料分类设置
-        material_category_settings_action = QAction("材料分类设置", self)
-        material_category_settings_action.triggered.connect(self.open_material_category_settings)
-        basic_info_settings_menu.addAction(material_category_settings_action)
-        # 材料属性设置（不要了20240901）
-        # material_attributes_settings_action = QAction("材料属性设置", self)
-        # material_attributes_settings_action.triggered.connect(self.open_material_attributes_settings)
-        # basic_info_settings_menu.addAction(material_attributes_settings_action)
+        # material_category_settings_action = QAction("材料分类设置", self)
+        # material_category_settings_action.triggered.connect(self.open_material_category_settings)
+        # basic_info_settings_menu.addAction(material_category_settings_action)
+
         # 材料设置
         material_settings_action = QAction("材料设置", self)
         material_settings_action.triggered.connect(self.open_material_settings)
         basic_info_settings_menu.addAction(material_settings_action)
-        #药品分类设置
-        # drug_category_settings_action = QAction("药品分类设置", self)
-        # drug_category_settings_action.triggered.connect(self.open_drug_category_settings)
-        # basic_info_settings_menu.addAction(drug_category_settings_action)
-        #药品属性设置
-        """------------------1.2 业务管理------------------"""
-        """--------有待解决BUG----------"""
-        #药品入库
-        drug_storage_action = QAction("药品入库", self)
-        drug_storage_action.triggered.connect(self.open_drug_storage_action)
-        business_management_menu.addAction(drug_storage_action)
 
+        """------------------1.2 业务管理------------------"""
+        #材料入库
+        material_in_storage_action = QAction("材料入库", self)
+        material_in_storage_action.triggered.connect(self.open_material_in_storage_action)
+        business_management_menu.addAction(material_in_storage_action)
+        # 材料出库
+        material_out_storage_action = QAction("材料出库", self)
+        material_out_storage_action.triggered.connect(self.open_material_out_storage_action)
+        business_management_menu.addAction(material_out_storage_action)
         """------------------1.3 库存报表查询------------------"""
-        # 药品库存查询
+        # 材料库存查询
         inventory_query_action = QAction("药品库存查询", self)
         inventory_query_action.triggered.connect(self.open_inventory_query_page)
         inventory_report_query_menu.addAction(inventory_query_action)
+        # 材料入库查询
+        material_in_storage_query_action = QAction("材料入库查询", self)
+        material_in_storage_query_action.triggered.connect(self.open_material_storage_query_page)
+        inventory_report_query_menu.addAction(material_in_storage_query_action)
+        # 材料出库查询
+        material_out_storage_query_action = QAction("材料出库查询", self)
+        material_out_storage_query_action.triggered.connect(self.open_material_outbound_query_page)
+        inventory_report_query_menu.addAction(material_out_storage_query_action)
 
-    # def open_drug_category_settings(self):
-    #     # 打开材料分类设置对话框
-    #     dialog = DrugCategorySettingsDialog(self)
-    #     dialog.exec_()
-
-    def open_drug_storage_action(self):
-        dialog = DrugStorageDialog(self)
+    def open_material_outbound_query_page(self):
+        dialog = MaterialOutboundQueryDialog(self)
         dialog.exec_()
+
+    def open_material_storage_query_page(self):
+        dialog = MaterialStorageQueryDialog(self)
+        dialog.exec_()
+
+    def open_material_in_storage_action(self):
+        dialog = MaterialStorageDialog(self)
+        dialog.exec_()
+
+    def open_material_out_storage_action(self):
+        dialog =MaterialOutboundDialog(self)
+
+        dialog.exec_()
+
 
     def open_inventory_query_page(self):
         dialog = InventoryQueryDialog(self)
@@ -108,11 +119,6 @@ class DrugManagementSystem(QMainWindow):
 
         # 显示材料设置界面
         self.stacked_widget.setCurrentWidget(self.material_settings_widget)
-
-    def open_material_attributes_settings(self):
-        # 打开材料属性设置对话框
-        dialog = MaterialAttributesSettingsDialog(self)
-        dialog.exec_()
 
     def open_material_category_settings(self):
         # 打开材料分类设置对话框
@@ -129,10 +135,10 @@ class DrugManagementSystem(QMainWindow):
         toolbar = QToolBar("Main Toolbar", self)
         self.addToolBar(toolbar)
         # 添加工具栏按钮（可扩展性保留）
-        save_action = QAction("保存", self)
-        exit_action = QAction("退出", self)
-        toolbar.addAction(save_action)
-        toolbar.addAction(exit_action)
+        # save_action = QAction("保存", self)
+        # exit_action = QAction("退出", self)
+        # toolbar.addAction(save_action)
+        # toolbar.addAction(exit_action)
 
     def create_statusbar(self):
         # 创建状态栏
